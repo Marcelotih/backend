@@ -5,13 +5,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import org.apache.tomcat.util.http.parser.Authorization;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -23,9 +24,7 @@ import com.example.demo.entity.Posto;
 import com.example.demo.enums.NivelAcesso;
 import com.example.demo.repository.PostoRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mysql.cj.protocol.x.Ok;
 
-import jakarta.transaction.Transactional;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -186,5 +185,58 @@ public class PostoControllerTest {
 
         assertFalse(posto.isAtivo());
     }
+    @Test
+    @DisplayName("Deve atualizar um posto com sucesso")
+    void atualizarPosto() throws Exception {
+        Posto posto = new Posto();
+        posto.setNome("posto att");
+        posto.setDescricao("posto att");
+        posto = pr.save(posto);
+        
+        mockMvc.perform(put("/postos/" + posto.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"nome\": \"Posto Atualizado\", \"descricao\": \"Descrição Atualizada\"}")
+                .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.nome").value("Posto Atualizado"))
+                .andExpect(jsonPath("$.descricao").value("Descrição Atualizada"));
+    }
+    @Test
+    @DisplayName("Deve dar badrequest ao atualizar posto com nome vazio")
+    void atualizarBadRequestNomeVazio() throws Exception {
+        Posto posto= new Posto();
+        posto.setNome("");
+        posto.setDescricao("");
+        posto = pr.save(posto);
+
+        mockMvc.perform(put("/postos/"+posto.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\nome\": \"\"}")
+                .header("Authorization", "Bearer " + token))
+                .andExpect(status().isBadRequest());
+    }
+    @Test
+    @DisplayName("deve dar ok ao enviar a foto do posto")
+    void enviarFoto() throws Exception {
+        MockMultipartFile fotoMock = new MockMultipartFile(
+            "foto", "foto.jpg", "image/jpeg", "dummy image content".getBytes());
+        Posto posto = new Posto();
+        posto.setNome("Posto com Foto"); 
+        posto.setDescricao("Posto com Foto");
+        posto = pr.save(posto);
+
+        mockMvc.perform(multipart("/check/in")
+                .file(fotoMock)
+                .param("postoId", posto.getId().toString())
+                .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk());
+    }
+    @Test
+    @DisplayName("verificar se o arquivo salvou corretamente")
+    void verificarArquivoSalvo()throws Exception{
+        MockMultipartFile fotoMock = new MockMultipartFile(
+            "foto", "foto.jpg", "image/jpeg", "dummy image content".getBytes());
+            
+        
+    }
 }
-   
