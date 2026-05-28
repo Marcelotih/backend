@@ -1,5 +1,7 @@
 package com.example.demo.entity;
 
+import java.time.LocalDateTime;
+
 import com.example.demo.enums.NivelAcesso;
 
 import jakarta.persistence.Column;
@@ -26,4 +28,10 @@ public class Usuario extends BaseEntity {
 
     @Column(name = "nivel_acesso", nullable = false)
     private NivelAcesso nivelAcesso = NivelAcesso.PADRAO;
+
+    
+    private String codigoRecuperacao;
+
+
+    private LocalDateTime codigoRecuperacaoExpiracao;
 }

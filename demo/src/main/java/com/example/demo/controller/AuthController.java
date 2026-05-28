@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,8 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.annotations.Public;
 import com.example.demo.config.JwtUtil;
 import com.example.demo.dto.AuthDTO;
+import com.example.demo.dto.RecuperacaoSolicitacaoDTO;
+import com.example.demo.dto.RecuperarSenhaDTO;
 import com.example.demo.entity.Usuario;
 import com.example.demo.repository.UsuarioRepository;
+import com.example.demo.service.UsuarioService;
 
 import jakarta.validation.Valid;
 
@@ -30,6 +34,9 @@ public class AuthController {
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    @Autowired
+    private UsuarioService usuarioService;
 
     @PostMapping("/login")
     @Public
@@ -56,6 +63,19 @@ public class AuthController {
     @Public
     public void pong(){
 
+    }
+    @Public
+    @PostMapping("/recuperacao")
+    public ResponseEntity<?>solicitarCodigo(@RequestBody @Valid RecuperacaoSolicitacaoDTO dto){
+        usuarioService.solicitarCodigo(dto);
+        return ResponseEntity.ok(Map.of("message", "E-mail enviado com sucesso!"));
+    }
+    @Public
+    @PostMapping("trocar-senha/alterar-senha")
+    public ResponseEntity<?>alterarSenha(@RequestBody @Valid RecuperarSenhaDTO dto){
+        usuarioService.trocarSenha(dto);
+        
+        return ResponseEntity.ok(Map.of("message", "senha alterada com sucesso!"));
     }
 
 }

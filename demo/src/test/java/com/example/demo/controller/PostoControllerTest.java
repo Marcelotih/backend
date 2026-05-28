@@ -232,11 +232,8 @@ public class PostoControllerTest {
                 .andExpect(status().isOk());
     }
     @Test
-    @DisplayName("verificar se o arquivo salvou corretamente")
-    void verificarArquivoSalvo()throws Exception{
-        MockMultipartFile fotoMock = new MockMultipartFile(
-            "foto", "foto.jpg", "image/jpeg", "dummy image content".getBytes());
-            
+    @DisplayName("verificando o jwt ")
+    void verificarJwt() throws Exception {
         
     }
 }
