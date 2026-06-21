@@ -13,4 +13,6 @@ public class CheckinDTO {
 
     private MultipartFile foto;
 
+    private String nome;
+
 }

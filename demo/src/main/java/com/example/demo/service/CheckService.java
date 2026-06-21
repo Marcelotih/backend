@@ -57,6 +57,7 @@ public class CheckService {
         Checkin checkin = new Checkin();
         checkin.setPosto(posto);
         checkin.setUsuario(usuario);
+        checkin.setNome(dto.getNome());
 
         if (dto.getFoto() != null && !dto.getFoto().isEmpty()) {
             Arquivo arquivo = arquivoService.upload(dto.getFoto());
