@@ -1,5 +1,6 @@
 package com.example.demo.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -21,5 +22,11 @@ public class Checkin extends BaseEntity {
 
     @ManyToOne
     private Arquivo foto;
+
+    @ManyToOne
+    private Usuario usuario;
+
+    @Column(name = "nome")
+    private String nome;
 
 }
