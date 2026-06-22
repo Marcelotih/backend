@@ -24,7 +24,7 @@ public class DataInitializer {
     public CommandLineRunner initDatabase(UsuarioRepository usuarioRepository, PostoRepository postoRepository){
         return args -> {
             // Criar usuário admin
-            if(usuarioRepository.count() <= 0){
+            if(usuarioRepository.findByEmail("admin@admin.com").isEmpty()){
                 Usuario usuario = new Usuario();
 
                 usuario.setEmail("admin@admin.com");
@@ -36,6 +36,21 @@ public class DataInitializer {
                 System.out.println("Usuário ADMIN criado com sucesso: admin@admin.com / 123456789");
             }else{
                 System.out.println("Usuário ADMIN já existe no banco!");
+            }
+
+            // Criar usuário padrão
+            if(usuarioRepository.findByEmail("usuario@usuario.com").isEmpty()){
+                Usuario usuarioPadrao = new Usuario();
+
+                usuarioPadrao.setEmail("usuario@usuario.com");
+                usuarioPadrao.setNivelAcesso(NivelAcesso.PADRAO); // ajuste conforme o nome real do enum
+                usuarioPadrao.setSenha(passwordEncoder.encode("123456789"));
+
+                usuarioRepository.save(usuarioPadrao);
+
+                System.out.println("Usuário padrão criado com sucesso: usuario@usuario.com / 123456789");
+            }else{
+                System.out.println("Usuário padrão já existe no banco!");
             }
 
             // Criar os 21 postos (seguindo o frontend)
@@ -52,6 +67,5 @@ public class DataInitializer {
             }
         };
     }
-    
 
 }
