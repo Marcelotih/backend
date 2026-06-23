@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.example.demo.annotations.Admin;
 import com.example.demo.annotations.Public;
 import com.example.demo.config.JwtUtil;
 import com.example.demo.dto.AuthDTO;
@@ -77,5 +79,17 @@ public class AuthController {
         
         return ResponseEntity.ok(Map.of("message", "senha alterada com sucesso!"));
     }
+    // cole antes do último } da classe
+@PostMapping("/usuarios")
+@Admin
+public ResponseEntity<?> criarUsuario(@RequestBody Map<String, String> body) {
+    String email = body.get("email");
+    String senha = body.get("senha");
+    if (email == null || email.isBlank() || senha == null || senha.isBlank()) {
+        return ResponseEntity.badRequest().body("Email e senha são obrigatórios.");
+    }
+    usuarioService.criarUsuario(email, senha);
+    return ResponseEntity.ok(Map.of("message", "Usuário criado com sucesso!"));
+}
 
 }

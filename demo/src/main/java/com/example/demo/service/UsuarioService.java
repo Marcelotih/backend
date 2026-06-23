@@ -52,6 +52,17 @@ public class UsuarioService extends BaseService<Usuario, UsuarioDTO> {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "deu erro ai chefia: ");
         }
     }
+    // cole antes do último } da classe
+@Transactional
+public void criarUsuario(String email, String senha) {
+    if (repository.findByEmail(email).isPresent()) {
+        throw new ResponseStatusException(HttpStatus.CONFLICT, "Usuário já existe.");
+    }
+    Usuario usuario = new Usuario();
+    usuario.setEmail(email);
+    usuario.setSenha(passwordEncoder.encode(senha));
+    repository.save(usuario);
+}
     @Transactional
     public void trocarSenha(RecuperarSenhaDTO dto) {
         String email = dto.getEmail();
@@ -68,6 +79,7 @@ public class UsuarioService extends BaseService<Usuario, UsuarioDTO> {
         if (usuario.getCodigoRecuperacaoExpiracao().isBefore(LocalDateTime.now())){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "codigo expirado");
         }
+        
         String novaSenhaCriptografada = passwordEncoder.encode(novaSenha);
         usuario.setSenha(novaSenhaCriptografada);
         usuario.setCodigoRecuperacao(null);
